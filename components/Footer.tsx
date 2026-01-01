@@ -26,6 +26,7 @@ const Footer = () => {
                 <div>
                     <h3 className="text-white font-bold uppercase tracking-wider mb-4">Support</h3>
                     <div className="flex flex-col gap-2">
+                        <Link href="/track-order" className="hover:text-primary transition-colors">Track Your Order</Link>
                         <Link href="#" className="hover:text-primary transition-colors">Contact Us</Link>
                         <Link href="#" className="hover:text-primary transition-colors">Shipping & Returns</Link>
                         <Link href="#" className="hover:text-primary transition-colors">Size Guide</Link>

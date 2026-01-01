@@ -1,6 +1,19 @@
 @import "tailwindcss";
 
 :root {
+  /* Light Mode (Default) */
+  --background: #ffffff;
+  --foreground: #09090b;
+  /* Zinc 950 */
+  --primary: #E60000;
+  --secondary: #f4f4f5;
+  /* Zinc 100 */
+  --muted: #71717a;
+  /* Zinc 500 */
+}
+
+.dark {
+  /* Dark Mode */
   --background: #000000;
   --foreground: #ffffff;
   --primary: #E60000;
@@ -22,4 +35,40 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
+  @apply antialiased text-sm tracking-wide overflow-x-hidden;
+}
+
+/* Global Focus Ring for Accessibility */
+*:focus-visible {
+  outline: none;
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-background transition-shadow duration-200;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-bold tracking-tight text-foreground;
+}
+
+h1 {
+  @apply text-3xl md:text-4xl;
+}
+
+h2 {
+  @apply text-2xl md:text-3xl;
+}
+
+h3 {
+  @apply text-xl md:text-2xl;
+}
+
+h4 {
+  @apply text-lg md:text-xl;
+}
+
+p {
+  @apply text-base text-gray-300 leading-relaxed;
 }
