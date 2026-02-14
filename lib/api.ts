@@ -13,15 +13,20 @@ const getApiUrl = () => {
 
 export const API_URL = getApiUrl();
 
-export async function getProducts(category?: string, sale?: boolean, search?: string) {
+export async function getProducts(category?: string, sale?: boolean, search?: string, minPrice?: number, maxPrice?: number) {
     const params = new URLSearchParams();
     if (category) params.append('category', category);
     if (sale) params.append('sale', 'true');
     if (search) params.append('search', search);
+    if (minPrice !== undefined) params.append('minPrice', minPrice.toString());
+    if (maxPrice !== undefined) params.append('maxPrice', maxPrice.toString());
 
     try {
         const res = await fetch(`${API_URL}/products?${params.toString()}`, { cache: 'no-store' });
-        if (!res.ok) throw new Error('Failed to fetch products');
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.error || `Failed to fetch products: ${res.status} ${res.statusText}`);
+        }
         return res.json();
     } catch (error) {
         console.error("API Error in getProducts:", error);
@@ -131,5 +136,50 @@ export async function updateReviewStatus(id: string, status: string) {
         body: JSON.stringify({ status }),
     });
     if (!res.ok) throw new Error('Failed to update review status');
+    return res.json();
+}
+
+// --- Order Management Functions ---
+
+export async function getUserOrders(userId: string) {
+    console.log(`Fetching orders for user: ${userId}`);
+    const res = await fetch(`${API_URL}/orders/user/${userId}`, { cache: 'no-store' });
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to fetch user orders: ${res.status} ${res.statusText}`);
+    }
+    return res.json();
+}
+
+export async function cancelOrder(orderId: string, reason: string) {
+    const res = await fetch(`${API_URL}/orders/${orderId}/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason }),
+    });
+    if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to cancel order');
+    }
+    return res.json();
+}
+
+// Reviews
+export async function getUserReviews(userId: string) {
+    const res = await fetch(`${API_URL}/reviews/user/${userId}`);
+    if (!res.ok) throw new Error('Failed to fetch reviews');
+    return res.json();
+}
+
+export async function returnOrder(orderId: string, reason: string) {
+    const res = await fetch(`${API_URL}/orders/${orderId}/return`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason }),
+    });
+    if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to request return');
+    }
     return res.json();
 }

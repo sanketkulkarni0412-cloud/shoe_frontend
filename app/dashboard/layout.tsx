@@ -30,7 +30,7 @@ export default function DashboardLayout({
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-black text-white">
+        <div className="min-h-screen bg-background text-foreground">
             <UserSidebar />
 
             {/* Main Content Area */}

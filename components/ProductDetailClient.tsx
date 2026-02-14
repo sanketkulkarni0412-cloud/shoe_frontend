@@ -21,7 +21,6 @@ type Product = {
     sizes: number[];
     description: string;
     isSale: boolean;
-    colors?: { name: string, hex: string, image: string }[];
 };
 
 export default function ProductDetailClient({ product }: { product: Product }) {
@@ -31,9 +30,6 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
     // State
     const [selectedSize, setSelectedSize] = useState<number | null>(null);
-    const [selectedColor, setSelectedColor] = useState<{ name: string, hex: string, image: string } | null>(
-        product.colors ? product.colors[0] : null
-    );
 
     // Lightbox State
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -67,7 +63,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             return;
         }
 
-        addToCart(product, selectedSize, selectedColor || undefined);
+        addToCart(product, selectedSize);
         setIsAdded(true);
         setTimeout(() => setIsAdded(false), 2000);
     };
@@ -84,21 +80,21 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             return;
         }
 
-        addToCart(product, selectedSize, selectedColor || undefined);
+        addToCart(product, selectedSize);
         router.push('/checkout');
     };
 
     return (
-        <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-                <Link href="/products" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
+                <Link href="/products" className="inline-flex items-center gap-2 text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white mb-8 transition-colors">
                     <ArrowLeft className="w-4 h-4" /> Back to Products
                 </Link>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     {/* Image Section - Animated Transition */}
                     <div
-                        className="relative aspect-square rounded-2xl overflow-hidden bg-secondary border border-white/10 group cursor-zoom-in"
+                        className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-secondary border border-gray-200 dark:border-white/10 group cursor-zoom-in"
                         onClick={() => setIsLightboxOpen(true)}
                     >
                         {product.isSale && (
@@ -112,17 +108,9 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                             priority
-                            style={{ filter: selectedColor ? 'grayscale(100%)' : 'none' }}
                         />
-                        {/* Color Overlay */}
-                        {selectedColor && (
-                            <div
-                                className="absolute inset-0 transition-colors duration-300 mix-blend-color pointer-events-none"
-                                style={{ backgroundColor: selectedColor.hex, opacity: 0.7 }}
-                            />
-                        )}
 
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                        <div className="absolute inset-0 bg-black/20 dark:bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                             <ZoomIn className="w-12 h-12 text-white" />
                         </div>
                     </div>
@@ -138,52 +126,23 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                                     <Star key={i} className="w-5 h-5 fill-current" />
                                 ))}
                             </div>
-                            <span className="text-gray-400">(128 reviews)</span>
+                            <span className="text-gray-500 dark:text-gray-400">(128 reviews)</span>
                         </div>
 
                         <div className="flex items-center gap-4 mb-8">
                             <span className="text-3xl font-bold">₹{product.price.toLocaleString('en-IN')}</span>
                             {product.discount > 0 && (
                                 <>
-                                    <span className="text-xl text-gray-500 line-through">₹{product.originalPrice.toLocaleString('en-IN')}</span>
+                                    <span className="text-xl text-gray-400 dark:text-gray-500 line-through">₹{product.originalPrice.toLocaleString('en-IN')}</span>
                                     <span className="bg-primary/20 text-primary px-2 py-1 rounded text-sm font-bold">-{product.discount}%</span>
                                 </>
                             )}
                         </div>
 
                         <div className="space-y-6 mb-8">
-                            <p className="text-gray-300 leading-relaxed text-lg">
+                            <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
                                 {product.description}
                             </p>
-
-                            {/* Color Selection */}
-                            {product.colors && product.colors.length > 0 && (
-                                <div>
-                                    <h3 className="font-bold mb-3 flex items-center gap-2">
-                                        Color: <span className="text-gray-400 font-normal">{selectedColor?.name || 'Select'}</span>
-                                    </h3>
-                                    <div className="flex items-center gap-3">
-                                        {product.colors.map((color) => (
-                                            <button
-                                                key={color.name}
-                                                onClick={() => setSelectedColor(color)}
-                                                className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all relative
-                                                    ${selectedColor?.name === color.name
-                                                        ? 'border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.3)]'
-                                                        : 'border-transparent hover:scale-110'
-                                                    }`}
-                                                style={{ backgroundColor: color.hex }}
-                                                title={color.name}
-                                            >
-                                                {/* Inner white ring for contrast on dark colors if needed, or checkmark */}
-                                                {selectedColor?.name === color.name && (
-                                                    <div className="w-full h-full rounded-full border-2 border-black/50" />
-                                                )}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
 
                             {/* Size Selection */}
                             <div>
@@ -202,7 +161,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                                             className={`w-12 h-12 rounded border transition-all flex items-center justify-center font-bold text-lg
                                                 ${selectedSize === size
                                                     ? 'bg-primary border-primary text-white scale-110 shadow-[0_0_15px_rgba(230,0,0,0.5)]'
-                                                    : 'border-white/20 hover:border-primary hover:bg-white/5 text-gray-300'
+                                                    : 'border-gray-200 dark:border-white/20 hover:border-primary hover:bg-gray-50 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300'
                                                 }`}
                                         >
                                             {size}
@@ -212,13 +171,13 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                             </div>
 
                             {/* Actions */}
-                            <div className="flex gap-4 border-t border-white/10 pt-6 mt-8">
+                            <div className="flex gap-4 border-t border-gray-200 dark:border-white/10 pt-6 mt-8">
                                 <button
                                     onClick={handleAdd}
                                     disabled={isAdded}
                                     className={`flex-1 py-3 rounded-full font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2 transition-all transform hover:-translate-y-1 ${isAdded
                                         ? 'bg-green-600 text-white cursor-default'
-                                        : 'bg-white text-black hover:bg-gray-200 shadow-lg'
+                                        : 'bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 shadow-lg'
                                         }`}
                                 >
                                     <ShoppingCart className="w-5 h-5" />
@@ -234,11 +193,11 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 mt-8">
-                                <div className="flex items-center gap-3 text-sm text-gray-400">
+                                <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                                     <Truck className="w-5 h-5 text-primary" />
                                     <span>Free Shipping</span>
                                 </div>
-                                <div className="flex items-center gap-3 text-sm text-gray-400">
+                                <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                                     <ShieldCheck className="w-5 h-5 text-primary" />
                                     <span>2 Year Warranty</span>
                                 </div>
@@ -247,7 +206,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                     </div>
                 </div>
 
-                <div className="mt-16 pt-16 border-t border-white/10">
+                <div className="mt-16 pt-16 border-t border-gray-200 dark:border-white/10">
                     <h2 className="text-2xl font-bold mb-8">Customer Reviews</h2>
                     <ProductReviews productId={product.id.toString()} />
                 </div>
@@ -274,7 +233,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
                             className="relative w-full max-w-5xl h-[80vh] sm:h-[90vh]"
                             onClick={(e) => e.stopPropagation()} // Prevent close on image click
                         >
@@ -285,15 +244,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                                 className="object-contain"
                                 priority
                                 quality={100}
-                                style={{ filter: selectedColor ? 'grayscale(100%)' : 'none' }}
                             />
-                            {/* Color Overlay for Lightbox */}
-                            {selectedColor && (
-                                <div
-                                    className="absolute inset-0 transition-colors duration-300 mix-blend-color pointer-events-none"
-                                    style={{ backgroundColor: selectedColor.hex, opacity: 0.7 }}
-                                />
-                            )}
                         </motion.div>
                     </motion.div>
                 )}

@@ -17,6 +17,8 @@ interface User {
     email: string | null;
     name: string;
     image?: string;
+    phone?: string;
+    dob?: string;
     role?: 'admin' | 'staff' | 'user'; // RBAC Role
 }
 
@@ -30,6 +32,7 @@ interface AuthContextType {
     resetPassword: (email: string) => Promise<void>;
     toggleRole?: (role: 'admin' | 'staff' | 'user') => void;
     updateUserImage: (url: string) => void;
+    updateUserProfile: (data: { name?: string; phone?: string; dob?: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,6 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     email: firebaseUser.email,
                     name: firebaseUser.displayName || userData.name || firebaseUser.email?.split('@')[0] || 'User',
                     image: userData.image || firebaseUser.photoURL || null, // Prioritize Firestore image
+                    phone: userData.phone || '',
+                    dob: userData.dob || '',
                     role: role as 'admin' | 'staff' | 'user'
                 });
             } else {
@@ -76,6 +81,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const updateUserImage = (url: string) => {
         if (user) {
             setUser({ ...user, image: url });
+        }
+    };
+
+    const updateUserProfile = async (data: { name?: string; phone?: string; dob?: string }) => {
+        try {
+            const currentUser = auth.currentUser;
+            if (!currentUser) throw new Error("No user logged in");
+
+            // 1. Update Firebase Auth Profile (only supports displayName & photoURL)
+            if (data.name) {
+                const { updateProfile } = await import("firebase/auth");
+                await updateProfile(currentUser, { displayName: data.name });
+            }
+
+            // 2. Update Firestore User Document
+            const { doc, updateDoc } = await import("firebase/firestore");
+            const userRef = doc(db, "users", currentUser.uid);
+            await updateDoc(userRef, data);
+
+            // 3. Update Local State
+            setUser((prev: any) => ({ ...prev, ...data }));
+        } catch (error) {
+            console.error("Failed to update profile", error);
+            throw error;
         }
     };
 
@@ -114,8 +143,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const loginWithEmail = async (email: string, pass: string) => {
         try {
             setIsLoading(true);
-            await signInWithEmailAndPassword(auth, email, pass);
-            router.push('/');
+            const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+
+            // Check if user is admin to redirect to admin panel
+            const { doc, getDoc } = await import("firebase/firestore");
+            const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+            const userData = userDoc.exists() ? userDoc.data() : {};
+
+            // Should be admin if role is 'admin' or email contains 'admin' (demo logic)
+            const isAdmin = userData.role === 'admin' || email.includes('admin');
+
+            if (isAdmin) {
+                router.push('/admin');
+            } else {
+                router.push('/');
+            }
         } catch (error) {
             throw error;
         } finally {
@@ -174,7 +216,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             logout,
             resetPassword,
             toggleRole,
-            updateUserImage
+            updateUserImage,
+            updateUserProfile
         }}>
             {!isLoading && children}
         </AuthContext.Provider>

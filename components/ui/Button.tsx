@@ -4,7 +4,7 @@ import { motion, HTMLMotionProps } from "framer-motion";
 import { ReactNode } from "react";
 
 interface ButtonProps extends HTMLMotionProps<"button"> {
-    variant?: "primary" | "secondary" | "outline" | "ghost";
+    variant?: "primary" | "secondary" | "outline" | "ghost" | "destructive";
     size?: "sm" | "md" | "lg";
     children: ReactNode;
     isLoading?: boolean;
@@ -22,10 +22,11 @@ const Button = ({
     const baseStyles = "inline-flex items-center justify-center font-bold tracking-wide rounded-full transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
-        primary: "bg-primary text-white hover:bg-red-700 active:bg-red-800",
-        secondary: "bg-white text-black hover:bg-gray-200 active:bg-gray-300",
-        outline: "bg-transparent border border-white/20 text-white hover:border-primary hover:text-primary",
-        ghost: "bg-transparent text-gray-300 hover:text-white hover:bg-white/5",
+        primary: "bg-primary text-white hover:bg-primary-hover active:scale-[0.98]",
+        secondary: "bg-gray-200 dark:bg-white text-black hover:bg-gray-300 dark:hover:bg-gray-200 active:bg-gray-400 dark:active:bg-gray-300",
+        outline: "bg-transparent border border-gray-300 dark:border-white/20 text-black dark:text-white hover:border-primary hover:text-primary",
+        ghost: "bg-transparent text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5",
+        destructive: "bg-red-500/10 text-red-500 border border-red-500/50 hover:bg-red-500 hover:text-white",
     };
 
     const sizes = {

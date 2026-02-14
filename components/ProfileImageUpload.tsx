@@ -129,7 +129,6 @@ export default function ProfileImageUpload({ currentImage, onImageUpdated }: { c
 
 
             const data = await response.json();
-            console.log("Upload response:", data); // Debug log
             if (data.photoURL) {
                 onImageUpdated(data.photoURL);
                 setImageSrc(null); // Close modal

@@ -77,7 +77,7 @@ export default function AdminAdsPage() {
                             <div key={i}>
                                 <label className="block text-gray-400 mb-2">Announcement {i}</label>
                                 <input
-                                    value={settings.marquee[`text${i}` as keyof typeof settings.marquee]}
+                                    value={(settings.marquee as any)[`text${i}`]}
                                     onChange={(e) => setSettings({
                                         ...settings,
                                         marquee: { ...settings.marquee, [`text${i}`]: e.target.value }

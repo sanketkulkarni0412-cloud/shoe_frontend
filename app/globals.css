@@ -1,32 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  /* Light Mode (Default) */
-  --background: #ffffff;
+  /* Light Mode (Default) - Green Theme */
+  --background: #f0fdf4;
+  /* Green 50 - Page Background */
   --foreground: #09090b;
   /* Zinc 950 */
-  --primary: #E60000;
-  --secondary: #f4f4f5;
-  /* Zinc 100 */
+  --primary: #16a34a;
+  /* Green 600 */
+  --primary-hover: #15803d;
+  /* Green 700 */
+  --secondary: #ffffff;
+  /* White - Card Background */
   --muted: #71717a;
   /* Zinc 500 */
+  --border: #bbf7d0;
+  /* Green 200 */
 }
 
 .dark {
-  /* Dark Mode */
+  /* Dark Mode - Red Theme */
   --background: #000000;
   --foreground: #ffffff;
   --primary: #E60000;
+  /* Red */
+  --primary-hover: #b91c1c;
+  /* Red 700 */
   --secondary: #1A1A1A;
   --muted: #404040;
+  --border: rgba(255, 255, 255, 0.1);
 }
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-muted: var(--muted);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -70,5 +82,5 @@ h4 {
 }
 
 p {
-  @apply text-base text-gray-300 leading-relaxed;
+  @apply text-base text-gray-600 dark:text-gray-300 leading-relaxed;
 }

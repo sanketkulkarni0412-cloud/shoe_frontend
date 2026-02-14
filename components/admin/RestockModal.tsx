@@ -39,7 +39,7 @@ export default function RestockModal({ isOpen, onClose, product, onConfirm }: Re
 
         try {
             setIsSubmitting(true);
-            await onConfirm(product.id || product._id, qty);
+            await onConfirm((product.id || product._id) as string, qty);
             setQuantity('');
             onClose();
         } catch (err) {
@@ -70,6 +70,7 @@ export default function RestockModal({ isOpen, onClose, product, onConfirm }: Re
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
                             onClick={(e) => e.stopPropagation()}
                             className="bg-secondary border border-white/10 rounded-xl w-full max-w-md overflow-hidden shadow-2xl"
                         >

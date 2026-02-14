@@ -57,6 +57,11 @@ const UserSidebar = () => {
             return;
         }
 
+        if (!user) {
+            console.error("User is not authenticated");
+            return;
+        }
+
         try {
             setUploading(true);
             const { storage, db, auth } = await import('@/lib/firebase');

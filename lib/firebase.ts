@@ -42,10 +42,8 @@ let app: FirebaseApp;
 
 if (!getApps().length) {
     app = initializeApp(firebaseConfig);
-    console.log('[Firebase] Initialized new app instance');
 } else {
     app = getApp();
-    console.log('[Firebase] Reused existing app instance');
 }
 
 import { getStorage, FirebaseStorage } from "firebase/storage";

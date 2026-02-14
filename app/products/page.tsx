@@ -2,6 +2,8 @@ import { getProducts } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
 import BlurText from '@/components/BlurText';
 
+import PriceFilter from '@/components/PriceFilter';
+
 type Props = {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
@@ -12,12 +14,16 @@ export default async function ProductsPage({ searchParams }: Props) {
     const isSale = params.sale === 'true';
     const search = typeof params.search === 'string' ? params.search : undefined;
 
-    const products = await getProducts(category, isSale, search);
+    // Parse price params
+    const minPrice = typeof params.minPrice === 'string' ? parseInt(params.minPrice) : undefined;
+    const maxPrice = typeof params.maxPrice === 'string' ? parseInt(params.maxPrice) : undefined;
+
+    const products = await getProducts(category, isSale, search, minPrice, maxPrice);
 
     return (
-        <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-white/10 pb-6">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-gray-200 dark:border-white/10 pb-6">
                     <div className="text-4xl font-bold uppercase tracking-widest">
                         <BlurText
                             text={search ? `Results for "${search}"` : category ? `${category} Collection` : isSale ? 'On Sale' : 'All Products'}
@@ -27,23 +33,36 @@ export default async function ProductsPage({ searchParams }: Props) {
                             className="text-4xl font-bold uppercase tracking-widest"
                         />
                     </div>
-                    <p className="text-gray-400 mt-2 md:mt-0">
+                    <p className="text-gray-500 dark:text-gray-400 mt-2 md:mt-0">
                         Showing {products.length} result{products.length !== 1 ? 's' : ''}
                     </p>
                 </div>
 
-                {products.length === 0 ? (
-                    <div className="text-center py-20">
-                        <h2 className="text-2xl font-bold mb-4">No products found</h2>
-                        <p className="text-gray-400">Try checking a different category.</p>
+                <div className="flex flex-col lg:flex-row gap-8">
+                    {/* Sidebar / Filters */}
+                    <aside className="w-full lg:w-64 flex-shrink-0">
+                        <div className="sticky top-24">
+                            <PriceFilter />
+                        </div>
+                    </aside>
+
+                    {/* Product Grid */}
+                    <div className="flex-1">
+                        {products.length === 0 ? (
+                            <div className="text-center py-20 bg-gray-100 dark:bg-secondary/30 rounded-xl border border-gray-200 dark:border-white/5">
+                                <h2 className="text-2xl font-bold mb-4">No products found</h2>
+                                <p className="text-gray-500 dark:text-gray-400 mb-6">Try adjusting your filters or checking a different category.</p>
+                                {/* Clear filters button could go here */}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                                {products.map((product: any, index: number) => (
+                                    <ProductCard key={product.id} product={product} index={index} />
+                                ))}
+                            </div>
+                        )}
                     </div>
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {products.map((product: any) => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
-                )}
+                </div>
             </div>
         </div>
     );

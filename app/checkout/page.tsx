@@ -272,9 +272,13 @@ export default function CheckoutPage() {
 
         // 2. Prepare order details
         const orderDetails = cart.map(item => ({
+            id: item.id,
             name: item.name,
+            brand: item.brand,
             quantity: item.quantity,
-            price: item.discount > 0 ? item.price * (1 - item.discount / 100) : item.price
+            price: item.discount > 0 ? item.price * (1 - item.discount / 100) : item.price,
+            image: item.image,
+            size: item.size
         }));
 
         try {
@@ -340,9 +344,9 @@ export default function CheckoutPage() {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-background dark:bg-black text-black dark:text-white py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-                <Link href="/cart" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
+                <Link href="/cart" className="inline-flex items-center gap-2 text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white mb-8 transition-colors">
                     <ArrowLeft className="w-4 h-4" /> Back to Cart
                 </Link>
 
@@ -351,60 +355,60 @@ export default function CheckoutPage() {
                 <div className="flex flex-col lg:flex-row gap-12">
                     {/* Shipping Form */}
                     <div className="flex-grow">
-                        <form onSubmit={handleSubmit} className="bg-secondary p-8 rounded-lg border border-white/5 space-y-6">
+                        <form onSubmit={handleSubmit} className="bg-secondary dark:bg-secondary p-8 rounded-lg border border-border dark:border-white/5 space-y-6">
                             <h2 className="text-2xl font-bold mb-6">Shipping Details</h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-gray-400 mb-2">First Name</label>
-                                    <input required type="text" value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors" />
+                                    <label className="block text-gray-500 dark:text-gray-400 mb-2">First Name</label>
+                                    <input required type="text" value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full bg-white dark:bg-black/50 border border-gray-300 dark:border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors text-black dark:text-white" />
                                 </div>
                                 <div>
-                                    <label className="block text-gray-400 mb-2">Last Name</label>
-                                    <input required type="text" value={lastName} onChange={e => setLastName(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors" />
+                                    <label className="block text-gray-500 dark:text-gray-400 mb-2">Last Name</label>
+                                    <input required type="text" value={lastName} onChange={e => setLastName(e.target.value)} className="w-full bg-white dark:bg-black/50 border border-gray-300 dark:border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors text-black dark:text-white" />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-gray-400 mb-2">Email</label>
+                                <label className="block text-gray-500 dark:text-gray-400 mb-2">Email</label>
                                 <input
                                     required
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-black/50 border border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors"
+                                    className="w-full bg-white dark:bg-black/50 border border-gray-300 dark:border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors text-black dark:text-white"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-gray-400 mb-2">Address</label>
-                                <input required type="text" value={address} onChange={e => setAddress(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors" />
+                                <label className="block text-gray-500 dark:text-gray-400 mb-2">Address</label>
+                                <input required type="text" value={address} onChange={e => setAddress(e.target.value)} className="w-full bg-white dark:bg-black/50 border border-gray-300 dark:border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors text-black dark:text-white" />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
-                                    <label className="block text-gray-400 mb-2">City</label>
-                                    <input required type="text" value={city} onChange={e => setCity(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors" />
+                                    <label className="block text-gray-500 dark:text-gray-400 mb-2">City</label>
+                                    <input required type="text" value={city} onChange={e => setCity(e.target.value)} className="w-full bg-white dark:bg-black/50 border border-gray-300 dark:border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors text-black dark:text-white" />
                                 </div>
                                 <div>
-                                    <label className="block text-gray-400 mb-2">State</label>
-                                    <input required type="text" value={state} onChange={e => setState(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors" />
+                                    <label className="block text-gray-500 dark:text-gray-400 mb-2">State</label>
+                                    <input required type="text" value={state} onChange={e => setState(e.target.value)} className="w-full bg-white dark:bg-black/50 border border-gray-300 dark:border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors text-black dark:text-white" />
                                 </div>
                                 <div>
-                                    <label className="block text-gray-400 mb-2">ZIP Code</label>
-                                    <input required type="text" value={zip} onChange={e => setZip(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors" />
+                                    <label className="block text-gray-500 dark:text-gray-400 mb-2">ZIP Code</label>
+                                    <input required type="text" value={zip} onChange={e => setZip(e.target.value)} className="w-full bg-white dark:bg-black/50 border border-gray-300 dark:border-white/10 rounded p-3 focus:border-primary focus:outline-none transition-colors text-black dark:text-white" />
                                 </div>
                             </div>
 
                             {/* Wallet Section */}
-                            <div className="pt-6 border-t border-white/10">
+                            <div className="pt-6 border-t border-gray-200 dark:border-white/10">
                                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                                     <Wallet className="w-5 h-5 text-primary" /> Wallet
                                 </h3>
-                                <div className="bg-black/30 p-4 rounded-lg border border-white/10 flex items-center justify-between">
+                                <div className="bg-white dark:bg-black/30 p-4 rounded-lg border border-gray-200 dark:border-white/10 flex items-center justify-between">
                                     <div>
-                                        <p className="font-bold">Use Wallet Balance</p>
-                                        <p className="text-sm text-gray-400">Available: ₹{walletBalance.toLocaleString('en-IN')}</p>
+                                        <p className="font-bold text-black dark:text-white">Use Wallet Balance</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Available: ₹{walletBalance.toLocaleString('en-IN')}</p>
                                     </div>
                                     <label className="relative inline-flex items-center cursor-pointer">
                                         <input
@@ -414,11 +418,11 @@ export default function CheckoutPage() {
                                             onChange={(e) => setUseWalletBalance(e.target.checked)}
                                             disabled={walletBalance <= 0}
                                         />
-                                        <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                        <div className="w-11 h-6 bg-gray-300 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                     </label>
                                 </div>
                                 {useWalletBalance && walletDeduction > 0 && (
-                                    <p className="text-green-500 text-sm mt-2">
+                                    <p className="text-green-600 dark:text-green-500 text-sm mt-2">
                                         ₹{walletDeduction.toLocaleString('en-IN')} will be deducted from your wallet.
                                     </p>
                                 )}
@@ -426,11 +430,11 @@ export default function CheckoutPage() {
 
                             {/* Payment Method Section (Only if remaining > 0) */}
                             {remainingToPay > 0 && (
-                                <div className="pt-6 border-t border-white/10">
+                                <div className="pt-6 border-t border-gray-200 dark:border-white/10">
                                     <h3 className="text-xl font-bold mb-4">Payment Method</h3>
                                     <div className="space-y-3">
                                         {/* COD Option */}
-                                        <label className={`flex items-center p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'COD' ? 'border-primary bg-primary/10' : 'border-white/10 bg-black/30 hover:bg-black/50'
+                                        <label className={`flex items-center p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'COD' ? 'border-primary bg-primary/10' : 'border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 hover:bg-gray-50 dark:hover:bg-black/50'
                                             }`}>
                                             <input
                                                 type="radio"
@@ -440,11 +444,11 @@ export default function CheckoutPage() {
                                                 onChange={(e) => setPaymentMethod(e.target.value)}
                                                 className="w-5 h-5 text-primary focus:ring-primary"
                                             />
-                                            <span className="ml-3 font-bold">Cash on Delivery (COD)</span>
+                                            <span className="ml-3 font-bold text-black dark:text-white">Cash on Delivery (COD)</span>
                                         </label>
 
                                         {/* Razorpay Option */}
-                                        <label className={`flex items-center p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'Razorpay' ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 bg-black/30 hover:bg-black/50'
+                                        <label className={`flex items-center p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'Razorpay' ? 'border-blue-500 bg-blue-500/10' : 'border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 hover:bg-gray-50 dark:hover:bg-black/50'
                                             }`}>
                                             <input
                                                 type="radio"
@@ -454,12 +458,12 @@ export default function CheckoutPage() {
                                                 onChange={(e) => setPaymentMethod(e.target.value)}
                                                 className="w-5 h-5 text-blue-500 focus:ring-blue-500"
                                             />
-                                            <span className="ml-3 font-bold">Pay with Razorpay</span>
+                                            <span className="ml-3 font-bold text-black dark:text-white">Pay with Razorpay</span>
                                             <span className="ml-auto text-xs bg-blue-500 text-white px-2 py-1 rounded">SECURE</span>
                                         </label>
 
                                         {/* UPI Option */}
-                                        <label className={`flex items-center p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'UPI' ? 'border-orange-500 bg-orange-500/10' : 'border-white/10 bg-black/30 hover:bg-black/50'
+                                        <label className={`flex items-center p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'UPI' ? 'border-orange-500 bg-orange-500/10' : 'border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 hover:bg-gray-50 dark:hover:bg-black/50'
                                             }`}>
                                             <input
                                                 type="radio"
@@ -470,22 +474,22 @@ export default function CheckoutPage() {
                                                 className="w-5 h-5 text-orange-500 focus:ring-orange-500"
                                             />
                                             <div className="ml-3 flex-1">
-                                                <span className="font-bold block">UPI (GPay, PhonePe, Paytm)</span>
+                                                <span className="font-bold block text-black dark:text-white">UPI (GPay, PhonePe, Paytm)</span>
                                             </div>
                                             <Smartphone className="w-5 h-5 text-orange-500" />
                                         </label>
 
                                         {/* UPI Section */}
                                         {paymentMethod === 'UPI' && (
-                                            <div className="p-4 bg-black/40 border border-white/5 rounded-lg space-y-4 animate-in fade-in slide-in-from-top-2">
+                                            <div className="p-4 bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/5 rounded-lg space-y-4 animate-in fade-in slide-in-from-top-2">
                                                 {savedUpiIds.length > 0 && (
                                                     <div className="space-y-2">
-                                                        <p className="text-xs text-gray-400 font-bold uppercase">Saved UPI IDs</p>
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase">Saved UPI IDs</p>
                                                         {savedUpiIds.map((upi) => (
                                                             <div
                                                                 key={upi.id}
                                                                 onClick={() => setSelectedUpiId(upi.vpa)}
-                                                                className={`flex items-center justify-between p-3 rounded border cursor-pointer transition-all ${selectedUpiId === upi.vpa ? 'border-orange-500 bg-orange-500/10' : 'border-white/10 hover:bg-white/5'}`}
+                                                                className={`flex items-center justify-between p-3 rounded border cursor-pointer transition-all ${selectedUpiId === upi.vpa ? 'border-orange-500 bg-orange-500/10' : 'border-gray-300 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5'}`}
                                                             >
                                                                 <div className="flex items-center gap-3">
                                                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white
@@ -495,13 +499,13 @@ export default function CheckoutPage() {
                                                                         {upi.app[0]}
                                                                     </div>
                                                                     <div>
-                                                                        <p className="text-sm font-mono">{upi.vpa.replace(/(.{2}).+(@.+)/, '$1***$2')}</p>
+                                                                        <p className="text-sm font-mono text-black dark:text-white">{upi.vpa.replace(/(.{2}).+(@.+)/, '$1***$2')}</p>
                                                                         <p className="text-xs text-gray-500">{upi.app}</p>
                                                                     </div>
                                                                 </div>
                                                                 <button
                                                                     onClick={(e) => handleDeleteUpi(upi.id, e)}
-                                                                    className="text-gray-500 hover:text-red-500 transition-colors"
+                                                                    className="text-gray-400 hover:text-red-500 transition-colors"
                                                                 >
                                                                     <Trash2 className="w-4 h-4" />
                                                                 </button>
@@ -511,14 +515,14 @@ export default function CheckoutPage() {
                                                 )}
 
                                                 <div className="pt-2">
-                                                    <label className="block text-xs text-gray-400 mb-2">Add New UPI ID</label>
+                                                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-2">Add New UPI ID</label>
                                                     <div className="flex gap-2">
                                                         <input
                                                             type="text"
                                                             placeholder="example@oksbi"
                                                             value={newUpiId}
                                                             onChange={(e) => setNewUpiId(e.target.value)}
-                                                            className="flex-grow bg-black/50 border border-white/10 rounded p-2 text-sm focus:border-orange-500 focus:outline-none"
+                                                            className="flex-grow bg-white dark:bg-black/50 border border-gray-300 dark:border-white/10 rounded p-2 text-sm focus:border-orange-500 focus:outline-none text-black dark:text-white"
                                                         />
                                                         <button
                                                             onClick={handleVerifyUpi}
@@ -533,7 +537,7 @@ export default function CheckoutPage() {
                                         )}
 
                                         {/* Credit/Debit Card Option */}
-                                        <label className={`flex items-center p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'Card' ? 'border-purple-500 bg-purple-500/10' : 'border-white/10 bg-black/30 hover:bg-black/50'
+                                        <label className={`flex items-center p-4 rounded-lg border cursor-pointer transition-all ${paymentMethod === 'Card' ? 'border-purple-500 bg-purple-500/10' : 'border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 hover:bg-gray-50 dark:hover:bg-black/50'
                                             }`}>
                                             <input
                                                 type="radio"
@@ -544,23 +548,23 @@ export default function CheckoutPage() {
                                                 className="w-5 h-5 text-purple-500 focus:ring-purple-500"
                                             />
                                             <div className="ml-3 flex-1">
-                                                <span className="font-bold block">Credit / Debit Card</span>
+                                                <span className="font-bold block text-black dark:text-white">Credit / Debit Card</span>
                                                 <div className="flex gap-2 mt-1">
-                                                    <div className="w-8 h-5 bg-white/20 rounded"></div>
-                                                    <div className="w-8 h-5 bg-white/20 rounded"></div>
-                                                    <div className="w-8 h-5 bg-white/20 rounded"></div>
+                                                    <div className="w-8 h-5 bg-gray-200 dark:bg-white/20 rounded"></div>
+                                                    <div className="w-8 h-5 bg-gray-200 dark:bg-white/20 rounded"></div>
+                                                    <div className="w-8 h-5 bg-gray-200 dark:bg-white/20 rounded"></div>
                                                 </div>
                                             </div>
                                         </label>
 
                                         {/* Card Input Form */}
                                         {paymentMethod === 'Card' && (
-                                            <div className="p-4 bg-black/40 border border-white/5 rounded-lg space-y-4 animate-in fade-in slide-in-from-top-2">
+                                            <div className="p-4 bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/5 rounded-lg space-y-4 animate-in fade-in slide-in-from-top-2">
                                                 <div className="flex justify-between items-center text-xs text-gray-500 mb-2">
                                                     <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Secure Payment (Mock)</span>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs text-gray-400 mb-1">Card Number (13-16 Digits)</label>
+                                                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Card Number (13-16 Digits)</label>
                                                     <div className="relative">
                                                         <input
                                                             type="text"
@@ -568,7 +572,7 @@ export default function CheckoutPage() {
                                                             maxLength={16}
                                                             value={cardNumber}
                                                             onChange={handleCardNumberChange}
-                                                            className={`w-full bg-black/50 border ${errors.cardNumber ? 'border-red-500' : 'border-white/10'} rounded p-2 pl-10 focus:border-purple-500 focus:outline-none font-mono transition-colors`}
+                                                            className={`w-full bg-white dark:bg-black/50 border ${errors.cardNumber ? 'border-red-500' : 'border-gray-300 dark:border-white/10'} rounded p-2 pl-10 focus:border-purple-500 focus:outline-none font-mono transition-colors text-black dark:text-white`}
                                                         />
                                                         <CreditCard className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
                                                     </div>
@@ -576,7 +580,7 @@ export default function CheckoutPage() {
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <label className="block text-xs text-gray-400 mb-1">Expiry Date (MM/YY)</label>
+                                                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Expiry Date (MM/YY)</label>
                                                         <input
                                                             ref={expiryRef}
                                                             type="text"
@@ -584,12 +588,12 @@ export default function CheckoutPage() {
                                                             maxLength={5}
                                                             value={expiry}
                                                             onChange={handleExpiryChange}
-                                                            className={`w-full bg-black/50 border ${errors.expiry ? 'border-red-500' : 'border-white/10'} rounded p-2 focus:border-purple-500 focus:outline-none transition-colors`}
+                                                            className={`w-full bg-white dark:bg-black/50 border ${errors.expiry ? 'border-red-500' : 'border-gray-300 dark:border-white/10'} rounded p-2 focus:border-purple-500 focus:outline-none transition-colors text-black dark:text-white`}
                                                         />
                                                         {errors.expiry && <p className="text-red-500 text-xs mt-1">{errors.expiry}</p>}
                                                     </div>
                                                     <div>
-                                                        <label className="block text-xs text-gray-400 mb-1">CVV</label>
+                                                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">CVV</label>
                                                         <input
                                                             ref={cvvRef}
                                                             type="password"
@@ -597,13 +601,13 @@ export default function CheckoutPage() {
                                                             maxLength={3}
                                                             value={cvv}
                                                             onChange={handleCvvChange}
-                                                            className={`w-full bg-black/50 border ${errors.cvv ? 'border-red-500' : 'border-white/10'} rounded p-2 focus:border-purple-500 focus:outline-none transition-colors`}
+                                                            className={`w-full bg-white dark:bg-black/50 border ${errors.cvv ? 'border-red-500' : 'border-gray-300 dark:border-white/10'} rounded p-2 focus:border-purple-500 focus:outline-none transition-colors text-black dark:text-white`}
                                                         />
                                                         {errors.cvv && <p className="text-red-500 text-xs mt-1">{errors.cvv}</p>}
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs text-gray-400 mb-1">Cardholder Name</label>
+                                                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Cardholder Name</label>
                                                     <input
                                                         ref={nameRef}
                                                         type="text"
@@ -613,7 +617,7 @@ export default function CheckoutPage() {
                                                             setCardName(e.target.value);
                                                             if (e.target.value.trim()) setErrors(prev => ({ ...prev, cardName: '' }));
                                                         }}
-                                                        className={`w-full bg-black/50 border ${errors.cardName ? 'border-red-500' : 'border-white/10'} rounded p-2 focus:border-purple-500 focus:outline-none uppercase transition-colors`}
+                                                        className={`w-full bg-white dark:bg-black/50 border ${errors.cardName ? 'border-red-500' : 'border-gray-300 dark:border-white/10'} rounded p-2 focus:border-purple-500 focus:outline-none uppercase transition-colors text-black dark:text-white`}
                                                     />
                                                     {errors.cardName && <p className="text-red-500 text-xs mt-1">{errors.cardName}</p>}
                                                 </div>
@@ -626,7 +630,7 @@ export default function CheckoutPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className={`w-full py-4 rounded font-bold uppercase tracking-wider transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 mt-8 disabled:opacity-50 disabled:cursor-not-allowed ${paymentMethod === 'Razorpay' && remainingToPay > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-primary hover:bg-red-700'
+                                className={`w-full py-4 rounded font-bold uppercase tracking-wider transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2 mt-8 disabled:opacity-50 disabled:cursor-not-allowed ${paymentMethod === 'Razorpay' && remainingToPay > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-primary hover:bg-primary-hover'
                                     } text-white`}
                             >
                                 {isLoading ? (
@@ -645,40 +649,40 @@ export default function CheckoutPage() {
 
                     {/* Order Summary */}
                     <div className="lg:w-96 flex-shrink-0">
-                        <div className="bg-secondary p-6 rounded-lg border border-white/5 sticky top-24">
-                            <h2 className="text-xl font-bold mb-6 uppercase tracking-wide">Order Summary</h2>
+                        <div className="bg-secondary dark:bg-secondary p-6 rounded-lg border border-border dark:border-white/5 sticky top-24">
+                            <h2 className="text-xl font-bold mb-6 uppercase tracking-wide text-black dark:text-white">Order Summary</h2>
 
                             <div className="space-y-4 mb-6 max-h-60 overflow-y-auto custom-scrollbar">
                                 {cart.map((item) => (
                                     <div key={`${item.id}-${item.size}`} className="flex justify-between items-start gap-4 text-sm">
                                         <div>
-                                            <p className="font-bold">{item.name}</p>
-                                            <p className="text-gray-400">{item.brand} {item.size && `(Size ${item.size})`}</p>
+                                            <p className="font-bold text-black dark:text-white">{item.name}</p>
+                                            <p className="text-gray-500 dark:text-gray-400">{item.brand} {item.size && `(Size ${item.size})`}</p>
                                             <p className="text-gray-500">Qty: {item.quantity}</p>
                                         </div>
-                                        <p className="font-bold">₹{((item.discount > 0 ? item.price * (1 - item.discount / 100) : item.price) * item.quantity).toLocaleString('en-IN')}</p>
+                                        <p className="font-bold text-black dark:text-white">₹{((item.discount > 0 ? item.price * (1 - item.discount / 100) : item.price) * item.quantity).toLocaleString('en-IN')}</p>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="h-px bg-white/10 my-4" />
+                            <div className="h-px bg-gray-200 dark:bg-white/10 my-4" />
 
                             {/* Coupon Input */}
                             <div className="mb-6">
-                                <label className="block text-gray-400 mb-2 text-sm">Coupon Code</label>
+                                <label className="block text-gray-500 dark:text-gray-400 mb-2 text-sm">Coupon Code</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
                                         value={couponCode}
                                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                                         placeholder="Enter code"
-                                        className="flex-grow bg-black/50 border border-white/10 rounded p-2 text-sm focus:border-primary focus:outline-none uppercase"
+                                        className="flex-grow bg-white dark:bg-black/50 border border-gray-300 dark:border-white/10 rounded p-2 text-sm focus:border-primary focus:outline-none uppercase text-black dark:text-white"
                                         disabled={discount > 0}
                                     />
                                     <Button
                                         onClick={handleApplyCoupon}
                                         disabled={!couponCode || discount > 0}
-                                        className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 text-sm"
+                                        className="bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-white/20 text-black dark:text-white px-4 py-2 text-sm"
                                     >
                                         {discount > 0 ? 'Applied' : 'Apply'}
                                     </Button>
@@ -690,31 +694,31 @@ export default function CheckoutPage() {
                                 )}
                             </div>
 
-                            <div className="h-px bg-white/10 my-4" />
+                            <div className="h-px bg-gray-200 dark:bg-white/10 my-4" />
 
                             <div className="space-y-2 mb-6">
-                                <div className="flex justify-between text-gray-400">
+                                <div className="flex justify-between text-gray-500 dark:text-gray-400">
                                     <span>Subtotal</span>
-                                    <span className="text-white">₹{totalPrice.toLocaleString('en-IN')}</span>
+                                    <span className="text-black dark:text-white">₹{totalPrice.toLocaleString('en-IN')}</span>
                                 </div>
                                 {discount > 0 && (
-                                    <div className="flex justify-between text-green-500">
+                                    <div className="flex justify-between text-green-600 dark:text-green-500">
                                         <span>Discount</span>
                                         <span>-₹{discount.toLocaleString('en-IN')}</span>
                                     </div>
                                 )}
                                 {useWalletBalance && walletDeduction > 0 && (
-                                    <div className="flex justify-between text-green-500">
+                                    <div className="flex justify-between text-green-600 dark:text-green-500">
                                         <span>Wallet</span>
                                         <span>-₹{walletDeduction.toLocaleString('en-IN')}</span>
                                     </div>
                                 )}
-                                <div className="flex justify-between text-gray-400">
+                                <div className="flex justify-between text-gray-500 dark:text-gray-400">
                                     <span>Shipping</span>
-                                    <span className="text-white">Free</span>
+                                    <span className="text-black dark:text-white">Free</span>
                                 </div>
                                 <div className="flex justify-between text-xl font-bold mt-4">
-                                    <span>Total Payable</span>
+                                    <span className="text-black dark:text-white">Total Payable</span>
                                     <span className="text-primary">₹{remainingToPay.toLocaleString('en-IN')}</span>
                                 </div>
                             </div>

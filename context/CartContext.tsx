@@ -9,22 +9,20 @@ type Product = {
     price: number;
     image: string;
     discount: number;
-    colors?: { name: string, hex: string, image: string }[];
 };
 
 type CartItem = Product & {
     quantity: number;
     size?: number;
-    color?: { name: string, hex: string, image: string };
 };
 
 type CartContextType = {
     cart: CartItem[];
-    addToCart: (product: Product, size?: number, color?: { name: string, hex: string, image: string }) => void;
-    removeFromCart: (productId: number, size?: number, colorName?: string) => void;
-    updateQuantity: (productId: number, size: number | undefined, quantity: number, colorName?: string) => void;
+    addToCart: (product: Product, size?: number) => void;
+    removeFromCart: (productId: number, size?: number) => void;
+    updateQuantity: (productId: number, size: number | undefined, quantity: number) => void;
     clearCart: () => void;
-    totalPrice: number;
+    totalPrice: number; // derived from cart
     cartCount: number;
 };
 
@@ -48,41 +46,39 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem('cart', JSON.stringify(cart));
     }, [cart]);
 
-    const addToCart = (product: Product, size?: number, color?: { name: string, hex: string, image: string }) => {
+    const addToCart = (product: Product, size?: number) => {
         setCart((prev) => {
             const existing = prev.find((item) =>
                 item.id === product.id &&
-                item.size === size &&
-                item.color?.name === color?.name
+                item.size === size
             );
 
             if (existing) {
                 return prev.map((item) =>
-                    item.id === product.id && item.size === size && item.color?.name === color?.name
+                    item.id === product.id && item.size === size
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 );
             }
-            return [...prev, { ...product, quantity: 1, size, color }];
+            return [...prev, { ...product, quantity: 1, size }];
         });
     };
 
-    const removeFromCart = (productId: number, size?: number, colorName?: string) => {
+    const removeFromCart = (productId: number, size?: number) => {
         setCart((prev) => prev.filter((item) => !(
             item.id === productId &&
-            item.size === size &&
-            item.color?.name === colorName
+            item.size === size
         )));
     };
 
-    const updateQuantity = (productId: number, size: number | undefined, quantity: number, colorName?: string) => {
+    const updateQuantity = (productId: number, size: number | undefined, quantity: number) => {
         if (quantity <= 0) {
-            removeFromCart(productId, size, colorName);
+            removeFromCart(productId, size);
             return;
         }
         setCart((prev) =>
             prev.map((item) =>
-                item.id === productId && item.size === size && item.color?.name === colorName
+                item.id === productId && item.size === size
                     ? { ...item, quantity }
                     : item
             )

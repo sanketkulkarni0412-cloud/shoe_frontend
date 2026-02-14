@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { Truck, Package, Clock, ShoppingBag, Heart, User } from 'lucide-react';
+import { Truck, Package, Clock, ShoppingBag, Heart, User, MessageSquare, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import ProfileImageUpload from '@/components/ProfileImageUpload';
@@ -100,17 +100,32 @@ export default function DashboardPage() {
                     </motion.div>
                 </Link>
 
-                <motion.div whileHover={{ y: -5 }} className="bg-secondary border border-white/5 p-6 rounded-xl h-full">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-green-500/10 rounded-lg text-green-500">
-                            <Truck className="w-6 h-6" />
+                <Link href="/dashboard/reviews">
+                    <motion.div whileHover={{ y: -5 }} className="bg-secondary border border-white/5 p-6 rounded-xl h-full cursor-pointer hover:border-primary/50 transition-colors">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-yellow-500/10 rounded-lg text-yellow-500">
+                                <MessageSquare className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-gray-400 text-sm">My Reviews</p>
+                                <p className="text-2xl font-bold text-foreground">0</p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-gray-400 text-sm">Active Shipments</p>
-                            <p className="text-2xl font-bold text-foreground">{activeShipments}</p>
+                    </motion.div>
+                </Link>
+                <Link href="/dashboard/settings">
+                    <motion.div whileHover={{ y: -5 }} className="bg-secondary border border-white/5 p-6 rounded-xl h-full cursor-pointer hover:border-primary/50 transition-colors">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-gray-500/10 rounded-lg text-gray-400">
+                                <Settings className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-gray-400 text-sm">Settings</p>
+                                <p className="text-xs text-gray-500">Profile, Addresses & Security</p>
+                            </div>
                         </div>
-                    </div>
-                </motion.div>
+                    </motion.div>
+                </Link>
             </div>
         </motion.div>
     );

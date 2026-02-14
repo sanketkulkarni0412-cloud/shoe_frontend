@@ -61,6 +61,7 @@ const DiscountPanel = () => {
                     initial={{ x: 100, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: 100, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                     className="fixed right-4 bottom-4 md:top-32 md:bottom-auto z-40 max-w-xs w-full"
                 >
                     <div className="bg-gradient-to-br from-red-900 to-black p-1 rounded-2xl shadow-2xl border border-white/10">

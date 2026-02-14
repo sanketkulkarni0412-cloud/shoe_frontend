@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Search, Eye, Truck, CheckCircle, Clock, XCircle, AlertCircle, X, Download, FileText, Mail } from 'lucide-react';
+import { Search, Eye, Truck, CheckCircle, Clock, XCircle, AlertCircle, X, Download, FileText, Mail, Copy } from 'lucide-react';
 import { collection, getDocs, doc, updateDoc, getFirestore, orderBy, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Button from '@/components/ui/Button';
@@ -14,7 +14,8 @@ export default function AdminOrdersPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
-    const [statusUpdateValues, setStatusUpdateValues] = useState<{ status: string, note: string }>({ status: 'Pending', note: '' });
+    const [statusUpdateValues, setStatusUpdateValues] = useState<{ status: string, note: string, trackingNumber: string }>({ status: 'Pending', note: '', trackingNumber: '' });
+    const [selectedStatusFilter, setSelectedStatusFilter] = useState('All');
     const [showToast, setShowToast] = useState(false);
 
     // Invoice State
@@ -28,6 +29,11 @@ export default function AdminOrdersPage() {
     useEffect(() => {
         fetchOrders();
     }, []);
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        alert(`Copied ${text} to clipboard!`);
+    };
 
     const fetchOrders = async () => {
         try {
@@ -47,7 +53,11 @@ export default function AdminOrdersPage() {
 
     const handleUpdateClick = (order: any) => {
         setSelectedOrder(order);
-        setStatusUpdateValues({ status: order.status, note: order.delayNote || '' });
+        setStatusUpdateValues({
+            status: order.status,
+            note: order.delayNote || '',
+            trackingNumber: order.trackingNumber || ''
+        });
     };
 
     const confirmUpdate = async () => {
@@ -57,6 +67,7 @@ export default function AdminOrdersPage() {
             await updateDoc(doc(db, "orders", selectedOrder.id), {
                 status: statusUpdateValues.status,
                 delayNote: statusUpdateValues.note || null,
+                trackingNumber: statusUpdateValues.trackingNumber || null,
                 history: [...(selectedOrder.history || []), {
                     previousStatus: selectedOrder.status,
                     newStatus: statusUpdateValues.status,
@@ -71,6 +82,7 @@ export default function AdminOrdersPage() {
                 ...o,
                 status: statusUpdateValues.status,
                 delayNote: statusUpdateValues.note,
+                trackingNumber: statusUpdateValues.trackingNumber,
                 history: [...(o.history || []), {
                     previousStatus: o.status,
                     newStatus: statusUpdateValues.status,
@@ -123,10 +135,12 @@ export default function AdminOrdersPage() {
         setSelectedOrders([]);
     };
 
-    const filteredOrders = orders.filter(o =>
-        o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        o.customerEmail?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredOrders = orders.filter(o => {
+        const matchesSearch = o.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            o.customerEmail?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = selectedStatusFilter === 'All' || o.status === selectedStatusFilter;
+        return matchesSearch && matchesStatus;
+    });
 
     return (
         <div>
@@ -147,6 +161,22 @@ export default function AdminOrdersPage() {
                     className="bg-transparent border-none focus:outline-none text-white w-full"
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
+            </div>
+
+            {/* Status Tabs */}
+            <div className="flex gap-2 overflow-x-auto pb-4 mb-4">
+                {['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map((status) => (
+                    <button
+                        key={status}
+                        onClick={() => setSelectedStatusFilter(status)}
+                        className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${selectedStatusFilter === status
+                            ? 'bg-primary text-white'
+                            : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                            }`}
+                    >
+                        {status}
+                    </button>
+                ))}
             </div>
 
             {loading ? (
@@ -183,7 +213,25 @@ export default function AdminOrdersPage() {
                                             onChange={() => toggleSelectOrder(order.id)}
                                         />
                                     </td>
-                                    <td className="p-4 font-mono text-xs text-gray-400">#{order.id.slice(0, 8)}...</td>
+                                    <td className="p-4">
+                                        <div className="flex items-center gap-2 group">
+                                            <span className="font-mono text-xs text-gray-400">
+                                                {order.customId ? order.customId : `#${order.id.slice(0, 8)}...`}
+                                            </span>
+                                            <button
+                                                onClick={() => copyToClipboard(order.customId || order.id)}
+                                                className="text-gray-600 hover:text-white opacity-0 group-hover:opacity-100 transition-all"
+                                                title="Copy Order ID"
+                                            >
+                                                <Copy className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                        {order.trackingNumber && (
+                                            <div className="text-[10px] text-blue-400 flex items-center gap-1 mt-1">
+                                                <Truck className="w-3 h-3" /> {order.trackingNumber}
+                                            </div>
+                                        )}
+                                    </td>
                                     <td className="p-4">
                                         <div>{order.customerEmail || 'Guest'}</div>
                                         {order.delayNote && <div className="text-xs text-yellow-500 flex items-center gap-1 mt-1"><AlertCircle className="w-3 h-3" /> Delayed</div>}
@@ -240,6 +288,16 @@ export default function AdminOrdersPage() {
                                         </select>
                                     </div>
                                     <div>
+                                        <label className="block text-xs text-gray-500 mb-1">Tracking Number</label>
+                                        <input
+                                            type="text"
+                                            placeholder="e.g. TRK123456789"
+                                            className="w-full bg-secondary border border-white/10 rounded p-2 focus:border-primary text-white"
+                                            value={statusUpdateValues.trackingNumber}
+                                            onChange={(e) => setStatusUpdateValues({ ...statusUpdateValues, trackingNumber: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2">
                                         <label className="block text-xs text-gray-500 mb-1">Delay Note / Reason (Optional)</label>
                                         <input
                                             type="text"

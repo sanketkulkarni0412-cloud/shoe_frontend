@@ -41,9 +41,9 @@ const SalesTimer = () => {
     return (
         <div className="flex gap-4 text-center">
             {Object.entries(timeLeft).map(([unit, value]) => (
-                <div key={unit} className="bg-black/50 backdrop-blur-sm border border-primary/30 p-2 min-w-[70px] rounded">
-                    <div className="text-2xl font-bold text-primary">{String(value).padStart(2, '0')}</div>
-                    <div className="text-xs text-gray-400 uppercase tracking-widest">{unit}</div>
+                <div key={unit} className="bg-white/80 dark:bg-black/50 backdrop-blur-sm border border-black/10 dark:border-primary/30 p-2 min-w-[70px] rounded shadow-sm">
+                    <div className="text-2xl font-bold text-black dark:text-primary">{String(value).padStart(2, '0')}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest">{unit}</div>
                 </div>
             ))}
         </div>
