@@ -142,8 +142,8 @@ export default function UsersPage() {
                             <button
                                 onClick={() => toggleUserStatus(user)}
                                 className={`flex-1 py-2 rounded text-sm transition-colors flex items-center justify-center gap-2 ${user.status === 'blocked'
-                                        ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20'
-                                        : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'
+                                    ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20'
+                                    : 'bg-red-500/10 text-red-500 hover:bg-red-500/20'
                                     }`}
                             >
                                 {user.status === 'blocked' ? <CheckCircle className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
@@ -204,7 +204,7 @@ export default function UsersPage() {
                                             <div key={order.id} className="bg-black/20 p-4 rounded-lg border border-white/5 flex justify-between items-center">
                                                 <div>
                                                     <div className="font-bold text-white">Order #{order.id.slice(0, 8)}</div>
-                                                    <div className="text-xs text-gray-400">{new Date(order.date).toLocaleDateString()} • {order.items.length} items</div>
+                                                    <div className="text-xs text-gray-400">{new Date(order.date).toLocaleDateString()} • {(order.items || order.orderDetails || []).length} items</div>
                                                 </div>
                                                 <div className="text-right">
                                                     <div className="font-bold text-primary">₹{order.total}</div>

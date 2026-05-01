@@ -63,7 +63,7 @@ export default function AdminProductsPage() {
 
         try {
             // Update in Firestore
-            await updateDoc(doc(db, "products", productId), {
+            await updateDoc(doc(db, "products", String(productId)), {
                 stock: newStock
             });
 
