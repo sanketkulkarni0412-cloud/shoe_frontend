@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
+import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -8,49 +9,31 @@ const firebaseConfig = {
     projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
     storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Validate that all variables are present
-const missingKeys = Object.entries(firebaseConfig)
-    .filter(([_, value]) => !value)
-    .map(([key]) => key);
+// Only validate and initialize on the client side or when env vars are present.
+// This prevents build-time crashes during server-side static page generation.
+const isMissingConfig = Object.values(firebaseConfig).some((v) => !v);
 
-if (missingKeys.length > 0) {
-    throw new Error(
-        `Firebase initialization failed because the following environment variables are missing: ${missingKeys.join(
-            ", "
-        )}. Please check your .env.local file.`
-    );
-}
-
-// Validate that variables are not placeholders
-const invalidKeys = Object.entries(firebaseConfig)
-    .filter(([_, value]) => value && value.startsWith('replace_with_your_'))
-    .map(([key]) => key);
-
-if (invalidKeys.length > 0) {
-    throw new Error(
-        `Firebase initialization failed because the following environment variables have placeholder values: ${invalidKeys.join(
-            ", "
-        )}. Please update your .env.local file with real Firebase keys.`
-    );
-}
-
-// Singleton pattern for Next.js (avoids multiple instance errors during HMR)
 let app: FirebaseApp;
+let auth: Auth;
+let db: Firestore;
+let storage: FirebaseStorage;
+let googleProvider: GoogleAuthProvider;
 
-if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-} else {
-    app = getApp();
+if (!isMissingConfig) {
+    app = getApps().length ? getApp() : initializeApp(firebaseConfig as Record<string, string>);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+    googleProvider = new GoogleAuthProvider();
+} else if (typeof window !== "undefined") {
+    // Only throw on the client side — server build gets a graceful skip
+    throw new Error(
+        `Firebase: missing env vars. Please set all NEXT_PUBLIC_FIREBASE_* variables in your Vercel project settings.`
+    );
 }
-
-import { getStorage, FirebaseStorage } from "firebase/storage";
-
-const auth: Auth = getAuth(app);
-const db: Firestore = getFirestore(app);
-const storage: FirebaseStorage = getStorage(app);
-const googleProvider = new GoogleAuthProvider();
 
 export { auth, db, storage, googleProvider };
+
