@@ -1,14 +1,16 @@
+// Base URL is always the bare domain — /api prefix is added per-call below.
+// Dev fallback: http://127.0.0.1:5000  (backend mounts routes at /api/*)
 const getApiUrl = () => {
-    // In development, fallback to localhost if env var is missing
     if (process.env.NODE_ENV === 'development') {
-        return process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000/api';
+        const url = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+        // Strip trailing /api if someone set it that way in .env.local
+        return url.replace(/\/api$/, '');
     }
-    // In production, force env var existence
     const url = process.env.NEXT_PUBLIC_API_URL;
     if (!url) {
         throw new Error('NEXT_PUBLIC_API_URL is missing in production environment');
     }
-    return url;
+    return url.replace(/\/api$/, '');
 };
 
 export const API_URL = getApiUrl();
@@ -21,8 +23,9 @@ export async function getProducts(category?: string, sale?: boolean, search?: st
     if (minPrice !== undefined) params.append('minPrice', minPrice.toString());
     if (maxPrice !== undefined) params.append('maxPrice', maxPrice.toString());
 
+    const url = `${API_URL}/api/products?${params.toString()}`;
     try {
-        const res = await fetch(`${API_URL}/products?${params.toString()}`, { cache: 'no-store' });
+        const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
             throw new Error(errorData.error || `Failed to fetch products: ${res.status} ${res.statusText}`);
@@ -30,19 +33,19 @@ export async function getProducts(category?: string, sale?: boolean, search?: st
         return res.json();
     } catch (error) {
         console.error("API Error in getProducts:", error);
-        console.error("Attempted URL:", `${API_URL}/products?${params.toString()}`);
+        console.error("Attempted URL:", url);
         return [];
     }
 }
 
 export async function getCategories() {
-    const res = await fetch(`${API_URL}/categories`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/categories`, { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch categories');
     return res.json();
 }
 
 export async function getProduct(id: string) {
-    const res = await fetch(`${API_URL}/products/${id}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/products/${id}`, { cache: 'no-store' });
     if (!res.ok) return null;
     return res.json();
 }
@@ -50,7 +53,7 @@ export async function getProduct(id: string) {
 // --- Admin Functions ---
 
 export async function adminLogin(credentials: Record<string, string>) {
-    const res = await fetch(`${API_URL}/admin/login`, {
+    const res = await fetch(`${API_URL}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
@@ -61,19 +64,19 @@ export async function adminLogin(credentials: Record<string, string>) {
 }
 
 export async function getAdminStats() {
-    const res = await fetch(`${API_URL}/admin/stats`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/admin/stats`, { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch stats');
     return res.json();
 }
 
 export async function getAdminOrders() {
-    const res = await fetch(`${API_URL}/admin/orders`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/admin/orders`, { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch orders');
     return res.json();
 }
 
 export async function updateOrderStatus(id: string, status: string) {
-    const res = await fetch(`${API_URL}/admin/orders/${id}`, {
+    const res = await fetch(`${API_URL}/api/admin/orders/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -83,13 +86,13 @@ export async function updateOrderStatus(id: string, status: string) {
 }
 
 export async function getAdminUsers() {
-    const res = await fetch(`${API_URL}/admin/users`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/admin/users`, { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch users');
     return res.json();
 }
 
 export async function addProduct(product: Record<string, unknown>) {
-    const res = await fetch(`${API_URL}/admin/products`, {
+    const res = await fetch(`${API_URL}/api/admin/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(product),
@@ -99,22 +102,23 @@ export async function addProduct(product: Record<string, unknown>) {
 }
 
 export async function deleteProduct(id: number) {
-    const res = await fetch(`${API_URL}/admin/products/${id}`, {
+    const res = await fetch(`${API_URL}/api/admin/products/${id}`, {
         method: 'DELETE',
     });
     if (!res.ok) throw new Error('Failed to delete product');
     return res.json();
 }
+
 // --- Reviews Functions ---
 
 export async function getProductReviews(productId: string) {
-    const res = await fetch(`${API_URL}/reviews/product/${productId}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/reviews/product/${productId}`, { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch reviews');
     return res.json();
 }
 
 export async function addProductReview(review: Record<string, unknown>) {
-    const res = await fetch(`${API_URL}/reviews`, {
+    const res = await fetch(`${API_URL}/api/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(review),
@@ -124,13 +128,13 @@ export async function addProductReview(review: Record<string, unknown>) {
 }
 
 export async function getAdminReviews() {
-    const res = await fetch(`${API_URL}/reviews/admin/all`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/reviews/admin/all`, { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch admin reviews');
     return res.json();
 }
 
 export async function updateReviewStatus(id: string, status: string) {
-    const res = await fetch(`${API_URL}/reviews/${id}/status`, {
+    const res = await fetch(`${API_URL}/api/reviews/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -143,7 +147,7 @@ export async function updateReviewStatus(id: string, status: string) {
 
 export async function getUserOrders(userId: string) {
     console.log(`Fetching orders for user: ${userId}`);
-    const res = await fetch(`${API_URL}/orders/user/${userId}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/orders/user/${userId}`, { cache: 'no-store' });
     if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         throw new Error(errorData.error || `Failed to fetch user orders: ${res.status} ${res.statusText}`);
@@ -152,7 +156,7 @@ export async function getUserOrders(userId: string) {
 }
 
 export async function cancelOrder(orderId: string, reason: string) {
-    const res = await fetch(`${API_URL}/orders/${orderId}/cancel`, {
+    const res = await fetch(`${API_URL}/api/orders/${orderId}/cancel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason }),
@@ -164,15 +168,14 @@ export async function cancelOrder(orderId: string, reason: string) {
     return res.json();
 }
 
-// Reviews
 export async function getUserReviews(userId: string) {
-    const res = await fetch(`${API_URL}/reviews/user/${userId}`);
+    const res = await fetch(`${API_URL}/api/reviews/user/${userId}`);
     if (!res.ok) throw new Error('Failed to fetch reviews');
     return res.json();
 }
 
 export async function returnOrder(orderId: string, reason: string) {
-    const res = await fetch(`${API_URL}/orders/${orderId}/return`, {
+    const res = await fetch(`${API_URL}/api/orders/${orderId}/return`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason }),
