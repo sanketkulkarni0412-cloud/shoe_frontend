@@ -8,10 +8,10 @@ type Product = {
     name: string;
     brand: string;
     price: number;
-    originalPrice?: number;
-    discount?: number;
+    originalPrice: number;
+    discount: number;
     image: string;
-    isSale?: boolean;
+    isSale: boolean;
 };
 
 type WishlistContextType = {
@@ -57,7 +57,7 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
     const moveToCart = (product: Product) => {
         // Adapt Wishlist Product to Cart Product if necessary
         // Cart Context adds quantity: 1 internally
-        addToCart({ ...product, discount: product.discount ?? 0 });
+        addToCart(product);
         removeFromWishlist(product.id);
     };
 

@@ -20,7 +20,7 @@ export default function PermissionGuard({ children, requiredRole, fallback = nul
     }
 
     // Staff check
-    if (requiredRole === 'staff' && (user.role === 'staff' || user.role === 'admin')) {
+    if (requiredRole === 'staff' && user.role === 'staff') {
         return <>{children}</>;
     }
 
