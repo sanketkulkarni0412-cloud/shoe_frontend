@@ -1,16 +1,11 @@
+export const dynamic = "force-dynamic";
+
 import { getProduct, getProducts } from '@/lib/api';
 import Link from 'next/link';
 import ProductDetailClient from '@/components/ProductDetailClient';
 
 type Props = {
     params: Promise<{ id: string }>
-}
-
-export async function generateStaticParams() {
-    const products = await getProducts();
-    return products.map((product: any) => ({
-        id: product.id.toString(),
-    }));
 }
 
 export default async function ProductPage({ params }: Props) {

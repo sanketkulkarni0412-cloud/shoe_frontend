@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
@@ -5,9 +7,9 @@ import { getProducts, getCategories, getProduct } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
 import SalesTimer from '@/components/SalesTimer';
 
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 
-const HeroVideo = dynamic(() => import('@/components/HeroVideo'));
+const HeroVideo = nextDynamic(() => import('@/components/HeroVideo'));
 import CategorySection from '@/components/CategorySection';
 
 export default async function Home() {
