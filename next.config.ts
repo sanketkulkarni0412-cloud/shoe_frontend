@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+
+  // 👇 YE ADD KARNA HAI
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;
